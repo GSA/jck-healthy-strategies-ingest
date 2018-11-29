@@ -69,7 +69,7 @@ class SkySparkAPITestCase(unittest.TestCase):
                                status=200)
         df = self.ss.json_to_parsed_df()
         result = df.shape
-        expected = (312, 11)
+        expected = (312, 12)
         self.assertTupleEqual(result, expected)
 
         

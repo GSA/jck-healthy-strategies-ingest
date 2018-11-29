@@ -67,6 +67,7 @@ class SkySparkAPI:
         cols_to_keep = ['equipRef','groupRef','hisEnd','hisRollup', 'hisRollupDis', 'hisRollupInterval', 
                         'indicator', 'navName','regionRef','siteRef','unit']    
         df = pd.concat(dfs)[cols_to_keep]
+        df['modality_indicator'] = df['navName'] + "-" + df['indicator']
         
         return df
 
