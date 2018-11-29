@@ -6,12 +6,15 @@ import re
 
 class SkySparkAPI:
 
-    def __init__(self, key, last_update):
+    def __init__(self, key, last_update=None):
         self.key = key
         self.last_update = last_update
         key_param = f'&api_key={key}'
-        last_update_param = f'&last_update={last_update}'
-        self.uri = f'https://test.api.com/api/v1/data'+ key_param + last_update_param
+        if last_update:
+            last_update_param = f'&last_update={last_update}'
+        else:
+            last_update_param = ''
+        self.uri = 'https://test.api.com/api/v1/data'+ key_param + last_update_param
 
 
     @staticmethod
@@ -39,7 +42,7 @@ class SkySparkAPI:
         parsed_data = {}
         for row in rows:
             col_counter = 0
-            for i, k in enumerate(row):
+            for k in row:
                 if col_counter == 0:
                     row_value = row[k]
                     timestamp_str = row_value.split()[0].replace("t:",'')
@@ -50,7 +53,7 @@ class SkySparkAPI:
                     value = digit_re.findall(row_value)[0]
                     if len(value) == 0:
                         value = None
-                    values_dict['value'] = value
+                    values_dict['value'] = float(value)
                     column = cols[col_counter]
                     for col_elem in column:
                         col_value = column[col_elem]
@@ -71,8 +74,26 @@ class SkySparkAPI:
         df = df.reset_index()
         df = df[cols_to_keep]
         df['modality_indicator'] = df['navName'] + "-" + df['indicator']
+        df['building_name'] = df['groupRef'].str.split(' ',1).apply(lambda x: x[1])
+        df['location'] = df['equipRef'].str.split(' ',1).apply(lambda x: x[1])
+        building_names = df['building_name'].unique()
+        locations = df['location'].tolist()
+        clean_locations = []
+        for location in locations:
+            for building_name in building_names:
+                clean_location = location.replace(building_name,'').strip()
+                clean_locations.append(clean_location)
+        df['location'] = clean_locations
+
+        # use mean to agg as there should only be one value per timestamp
+        # and if there isn't then we mind as well average
+        grouped_df = pd.DataFrame(df.groupby(by = ['building_name', 
+                                                   'location', 
+                                                   'modality_indicator', 
+                                                   'unit', 
+                                                   'timestamp'])['value'].mean()).reset_index()
         
-        return df
+        return grouped_df
 
                 
 
