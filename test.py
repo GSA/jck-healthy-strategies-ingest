@@ -2,7 +2,6 @@ import requests
 import httpretty
 import unittest
 import os
-import json
 import datetime
 import pandas as pd
 from sqlalchemy import func
