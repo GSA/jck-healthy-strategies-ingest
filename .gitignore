@@ -130,8 +130,7 @@ $RECYCLE.BIN/
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 
-#Data
-*.csv
+
 #Notebooks
 *.ipynb
 
