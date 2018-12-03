@@ -134,3 +134,6 @@ $RECYCLE.BIN/
 *.csv
 #Notebooks
 *.ipynb
+
+#Config
+config.py
