@@ -19,7 +19,6 @@ def main():
     ss = SkySparkAPI(date = date)
     file_name = ss.download_data()
     df = ss.create_data_frame(file_name)
-    
     session = dal.Session()
     insert_data(df, session)
     session.commit()
