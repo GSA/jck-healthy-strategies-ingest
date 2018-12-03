@@ -3,12 +3,14 @@ import httpretty
 import unittest
 import os
 import json
+import datetime
 import pandas as pd
 from sqlalchemy import func
 from skyspark import SkySparkAPI
 from db.db import DataAccessLayer, Building, Location, Indicator, Unit, Value
 from db.db_utils import insert_data
 from main import main
+
 
 
 #test env
@@ -20,6 +22,12 @@ else:
 
 dal = DataAccessLayer()
 
+def join_temp_path(file_name):
+    dummy_path = os.path.join(os.getcwd(), 'temp', file_name)
+    
+    return dummy_path
+
+
 def exceptionCallback(request, uri, headers):
     '''
     Create a callback body that raises an exception when opened. This simulates a bad request.
@@ -30,63 +38,21 @@ def exceptionCallback(request, uri, headers):
 class SkySparkAPITestCase(unittest.TestCase):
 
     def setUp(self):
-        with open('fixtures/dummy_data.json') as f:
-            dummy_data = json.loads(f.read())
-        key = '123'
-        last_update = '2018/11/28'
-        self.ss = SkySparkAPI(key=key, last_update=last_update)
-        self.dummy_data = dummy_data
+        self.ss = SkySparkAPI(date = '2018-10-01')
 
     def tearDown(self):
         self.ss = None
-        self.dummy_data = None
 
-    @httpretty.activate
-    def test_get_data_conn_error(self):
-        uri = self.ss.uri
-        httpretty.register_uri(httpretty.GET, 
-                               uri=uri, 
-                               body=exceptionCallback,
-                               status=200)
-        with self.assertRaises(SystemExit) as cm:
-            _ = self.ss.get_data(uri)
-        self.assertEqual(cm.exception.code, 1)
+    def test_download_data(self):
+        self.ss.ftp_url = 'ftp://ftp.fbo.gov/FBOFeed20180101'
+        result = self.ss.download_data()
+        expected = join_temp_path('jck_sensor_data_2018-10-01.csv')
+        self.assertEqual(result, expected)
 
-    @httpretty.activate
-    def test_get_data_non200(self):
-        uri = self.ss.uri
-        httpretty.register_uri(httpretty.GET, 
-                               uri=uri, 
-                               body="doesn't matter",
-                               status=404)
-        with self.assertRaises(SystemExit) as cm:
-            _ = self.ss.get_data(uri)
-        self.assertEqual(cm.exception.code, 1)
-
-    @httpretty.activate
-    def test_get_data(self):
-        uri = self.ss.uri
-        dummy_data = json.dumps(self.dummy_data)
-        httpretty.register_uri(httpretty.GET, 
-                               uri=uri, 
-                               body=dummy_data,
-                               status=200)
-        result = self.ss.get_data(uri)
-        expected = self.dummy_data
-        self.assertDictEqual(result, expected)
-
-    @httpretty.activate
-    def test_json_to_parsed_df(self):
-        uri = self.ss.uri
-        dummy_data = json.dumps(self.dummy_data)
-        httpretty.register_uri(httpretty.GET, 
-                               uri=uri, 
-                               body=dummy_data,
-                               status=200)
-        grouped_df = self.ss.json_to_parsed_df()
-        result = grouped_df.shape
-        expected = (312, 6)
-        self.assertTupleEqual(result, expected)
+    def test_create_data_frame(self):
+        result = self.ss.create_data_frame('fixtures/dummy.csv')
+        expected = pd.read_csv('fixtures/dummy.csv')
+        pd.testing.assert_frame_equal(result, expected)
 
 
 class DBTestCase(unittest.TestCase):      
