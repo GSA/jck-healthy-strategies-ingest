@@ -10,7 +10,6 @@ numpy==1.15.4
 pandas==0.23.4
 parsimonious==0.8.1
 Pint==0.8.1
-pyhaystack==0.92.7
 pyparsing==2.3.0
 python-dateutil==2.7.5
 pytz==2018.7
