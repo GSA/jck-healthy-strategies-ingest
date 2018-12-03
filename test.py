@@ -143,43 +143,7 @@ class DBTestCase(unittest.TestCase):
         self.assertEqual(value_rows,10)
 
 
-class E2ETestCase(unittest.TestCase):     
 
-    @classmethod
-    def setUpClass(cls):
-        with open('fixtures/dummy_data.json') as f:
-            dummy_data = json.loads(f.read())
-        cls.dummy_data = dummy_data
-        cls.dal = dal
-        cls.dal.connect() 
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.ss = None
-        cls.dummy_data = None
-        cls.dal = None
-    
-    @httpretty.activate
-    def test_main(self):
-        key_param = '&api_key=123'
-        uri = 'https://test.api.com/api/v1/data'+ key_param
-        dummy_data = json.dumps(self.dummy_data)
-        httpretty.register_uri(httpretty.GET, 
-                               uri=uri, 
-                               body=dummy_data,
-                               status=200)
-        main()
-        session = E2ETestCase.dal.Session()
-        building_rows = session.query(func.count(Building.id)).scalar()
-        self.assertEqual(building_rows,1)
-        location_rows = session.query(func.count(Location.id)).scalar()
-        self.assertEqual(location_rows,3)
-        indicator_rows = session.query(func.count(Indicator.id)).scalar()
-        self.assertEqual(indicator_rows,13)
-        unit_rows = session.query(func.count(Unit.id)).scalar()
-        self.assertEqual(unit_rows,13)
-        value_rows = session.query(func.count(Value.id)).scalar()
-        self.assertEqual(value_rows,312)
 
     
 
