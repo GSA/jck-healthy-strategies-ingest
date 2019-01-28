@@ -100,20 +100,21 @@ class DBTestCase(unittest.TestCase):
     def test_insert_data(self):
         with session_scope(dal) as session:
             insert_data(DBTestCase.test_df, session)
-        
+        result = 0
         with session_scope(dal) as session:
             building_rows = session.query(func.count(Building.id)).scalar()
-            self.assertEqual(building_rows,1)
+            result += building_rows == 1
             floor_rows = session.query(func.count(Floor.id)).scalar()
-            self.assertEqual(floor_rows,4)
+            result += floor_rows == 4
             room_rows = session.query(func.count(Room.id)).scalar()
-            self.assertEqual(room_rows,5)
+            result += room_rows == 5
             modality_rows = session.query(func.count(Modality.id)).scalar()
-            self.assertEqual(modality_rows,2)
+            result += modality_rows == 5
             unit_rows = session.query(func.count(Unit.id)).scalar()
-            self.assertEqual(unit_rows,2)
+            result += unit_rows == 5
             value_rows = session.query(func.count(Value.id)).scalar()
-            self.assertEqual(value_rows,5)
+        expected = 20
+        self.assertEqual(result,expected)
 
     def test_insert_data_dupe_parents(self):
         test_df = DBTestCase.test_df
@@ -122,20 +123,21 @@ class DBTestCase(unittest.TestCase):
         with session_scope(dal) as session:
             insert_data(test_df, session)
         
+                result = 0
         with session_scope(dal) as session:
             building_rows = session.query(func.count(Building.id)).scalar()
-            self.assertEqual(building_rows,1)
+            result += building_rows == 1
             floor_rows = session.query(func.count(Floor.id)).scalar()
-            self.assertEqual(floor_rows,4)
+            result += floor_rows == 4
             room_rows = session.query(func.count(Room.id)).scalar()
-            self.assertEqual(room_rows,5)
+            result += room_rows == 5
             modality_rows = session.query(func.count(Modality.id)).scalar()
-            self.assertEqual(modality_rows,2)
+            result += modality_rows == 5
             unit_rows = session.query(func.count(Unit.id)).scalar()
-            self.assertEqual(unit_rows,2)
-            #the only difference should be here
+            result += unit_rows == 10
             value_rows = session.query(func.count(Value.id)).scalar()
-            self.assertEqual(value_rows,10)
+        expected = 25
+        self.assertEqual(result,expected)
 
 
 
