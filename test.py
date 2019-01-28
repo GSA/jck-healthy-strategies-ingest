@@ -49,8 +49,8 @@ class SkySparkAPITestCase(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_create_data_frame(self):
-        result = self.ss.create_data_frame('fixtures/dummy.csv')
-        expected = pd.read_csv('fixtures/dummy.csv')
+        result = self.ss.create_data_frame('fixtures/2019yr1mo3day8h.csv')
+        expected = pd.read_csv('fixtures/2019yr1mo3day8h.csv')
         pd.testing.assert_frame_equal(result, expected)
 
 
@@ -58,39 +58,45 @@ class DBTestCase(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
-        building_names = ['Chicago Air Quality',
-                          'Chicago Air Quality',
-                          'Chicago Air Quality',
-                          'Chicago Air Quality',
-                          'Chicago Air Quality']
-        locations = ['South Office',
-                     'North Office',
-                     'Outdoor Reading',
-                     'South Office',
-                     'Outdoor Reading']
-        modality_indicators = ['Total Volatile Organic Compounds (TVOC)-tvoc',
-                               'Humidity-humidity',
-                               'Outside Particle Polution-pm2p5',
-                               'CO2-co2',
-                               'Outside Particle Polution-pm2p5']
-        units = ['µg/m³', '%RH', 'µg/m³', 'ppm', 'µg/m³']
+        building_names = ['JCK',
+                          'JCK',
+                          'JCK',
+                          'JCK',
+                          'JCK']
+        floors = ['1',
+                  '2',
+                  '3',
+                  '4',
+                  '4']
+        room_types = ['a','b','c','c','c']
+        room_numbers = ['1','2','3','4','5']
+        modalities = ['temp',
+                      'temp',
+                      'co',
+                      'co',
+                      'co']
+        units = ['°C', '°C', 'ppm', 'ppm', 'ppm']
         timestamps = ['2018-11-25T08:00:00-06:00',
                       '2018-11-25T01:00:00-06:00',
                       '2018-11-25T23:00:00-06:00',
                       '2018-11-25T21:00:00-06:00',
                       '2018-11-25T13:00:00-06:00']
-        values = [60.0, 32.060001373291016, 1.0, 388.0, 2.0]
+        values = [40,40,10,10,10]
         test_df = pd.DataFrame([building_names,
-                                locations,
-                                modality_indicators,
+                                floors,
+                                room_types,
+                                room_numbers,
+                                modalities,
                                 units,
                                 timestamps,
                                 values]).transpose()
-        test_df.columns = ['building_name',
-                           'location',
-                           'modality_indicator',
+        test_df.columns = ['building',
+                           'floor',
+                           'room_type',
+                           'room_number',
+                           'modality',
                            'unit',
-                           'timestamp',
+                           'Timestamp',
                            'value'
                             ]
         cls.test_df = test_df
