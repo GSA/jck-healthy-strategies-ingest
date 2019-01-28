@@ -17,6 +17,7 @@ def join_temp_path(file_name):
 
 def get_expected_df():
     expected_df = pd.read_csv('fixtures/expected.csv')
+    expected_df['Timestamp'] = pd.to_datetime(expected_df['Timestamp'])
     return expected_df
 
 def exceptionCallback(request, uri, headers):
