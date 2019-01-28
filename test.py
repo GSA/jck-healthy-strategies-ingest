@@ -113,8 +113,9 @@ class DBTestCase(unittest.TestCase):
             unit_rows = session.query(func.count(Unit.id)).scalar()
             result += unit_rows == 5
             value_rows = session.query(func.count(Value.id)).scalar()
-        expected = 20
-        self.assertEqual(result,expected)
+            result += value_rows == 5
+        expected = 6
+        self.assertEqual(result, expected)
 
     def test_insert_data_dupe_parents(self):
         test_df = DBTestCase.test_df
@@ -123,7 +124,7 @@ class DBTestCase(unittest.TestCase):
         with session_scope(dal) as session:
             insert_data(test_df, session)
         
-                result = 0
+        result = 0
         with session_scope(dal) as session:
             building_rows = session.query(func.count(Building.id)).scalar()
             result += building_rows == 1
@@ -134,9 +135,10 @@ class DBTestCase(unittest.TestCase):
             modality_rows = session.query(func.count(Modality.id)).scalar()
             result += modality_rows == 5
             unit_rows = session.query(func.count(Unit.id)).scalar()
-            result += unit_rows == 10
+            result += unit_rows == 5
             value_rows = session.query(func.count(Value.id)).scalar()
-        expected = 25
+            result += value_rows == 10
+        expected = 6
         self.assertEqual(result,expected)
 
 
