@@ -1,6 +1,6 @@
 from .db import Building, Floor, Room, Modality, Unit, Value, Base
 from contextlib import contextmanager
-from sqlalchemy import create_engine, func, case
+from sqlalchemy import create_engine, func, case, desc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database, drop_database
 import logging
