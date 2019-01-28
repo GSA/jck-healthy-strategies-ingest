@@ -1,4 +1,4 @@
-from db import Building, Floor, Room, Modality, Unit, Value, Base
+from .db import Building, Floor, Room, Modality, Unit, Value, Base
 from contextlib import contextmanager
 from sqlalchemy import create_engine, func, case
 from sqlalchemy.orm import sessionmaker
@@ -6,6 +6,7 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 import logging
 import pandas as pd
 import os
+import sys
 
 
 def get_db_url():
@@ -32,7 +33,7 @@ class DataAccessLayer:
         if not local:
             self.engine = create_engine(self.conn_string)
         try:
-            db.Base.metadata.create_all(self.engine)
+            Base.metadata.create_all(self.engine)
         except Exception as e:
             logging.critical(f"Exception occurred creating database metadata with uri:  \
                                {self.conn_string}. Full traceback here:  {e}", exc_info=True)
