@@ -8,7 +8,6 @@ from sqlalchemy import func
 from skyspark import SkySparkAPI
 from db.db import Building, Floor, Room, Modality, Unit, Value
 from db.db_utils import insert_data, dal, session_scope
-from main import main
 
 
 def join_temp_path(file_name):
