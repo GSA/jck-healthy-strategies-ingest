@@ -17,9 +17,8 @@ def get_db_url():
         db_string = os.getenv('TEST_DB_URL')
     else:
         db_string = "postgresql+psycopg2://localhost/test"    
-    conn_string = db_string.replace('\postgresql', 'postgresql+psycopg2')
     
-    return conn_string
+    return db_string
 
 
 class DataAccessLayer:
