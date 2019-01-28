@@ -99,7 +99,7 @@ class DBTestCase(unittest.TestCase):
 
     def test_insert_data(self):
         with session_scope(dal) as session:
-            insert_data(test_df, session)
+            insert_data(DBTestCase.test_df, session)
         
         with session_scope(dal) as session:
             building_rows = session.query(func.count(Building.id)).scalar()
