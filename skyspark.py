@@ -36,7 +36,7 @@ class SkySparkAPI:
         
         try:
             with closing(urllib.request.urlopen(self.ftp_url)) as r:
-                file_name = os.path.join(out_path,file_name)
+                file_name = os.path.join(out_path, file_name)
                 with open(file_name, 'wb') as f:
                     shutil.copyfileobj(r, f)
         except Exception as err:
